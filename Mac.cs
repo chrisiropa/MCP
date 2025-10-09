@@ -15,6 +15,9 @@ namespace MCP
 		{
 			switch(commandArgs[0]) 
 			{
+				case "set":
+					Set(commandArgs);
+				break;
 				case "read":
 					Read();
 				break;
@@ -27,7 +30,21 @@ namespace MCP
 			}
 		}
 
-		
+		private void Set(string[] commandArgs)
+		{
+			if(commandArgs.Length > 1)
+			{
+				if(IsValidMac(commandArgs[1]))
+				{
+					mac = commandArgs[1];
+					Console.WriteLine("MAC-Adresse gesetzt = {0}", mac);
+				}
+				else
+				{
+					Console.WriteLine("Übergebene MAC-Adresse ungültig = {0}", commandArgs[1]);
+				}
+			}
+		}
 
 		private void Read()
 		{

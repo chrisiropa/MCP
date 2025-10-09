@@ -12,6 +12,7 @@ namespace MCP
 		MAC = 1,
 		CD = 2,
 		DIR = 3,
-		EXP = 4
+		EXP = 4,
+		DEC = 5
 	}
 }

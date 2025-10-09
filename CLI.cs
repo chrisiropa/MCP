@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace MCP
@@ -11,7 +12,16 @@ namespace MCP
       private Dir dir = new Dir();
       private Expire exp = new Expire();
       private Signer signer = new Signer();
+      private Decrypt dec = new Decrypt();
 
+      private Boolean oneWay = false;
+      private string[] args;
+
+      public CLI(Boolean oneWay, string[] args)
+      {
+         this.oneWay = oneWay;
+         this.args = args;
+      }
 
       private void WritePrompt()
       {
@@ -26,10 +36,22 @@ namespace MCP
       }
       public void Run()
       {
+         if(oneWay)
+         {
+            string command = "";
+            foreach(string arg in args) 
+            {
+               command += arg;
+               command += " ";
+            }
+
+
+            HandleCommand(command.Trim());
+
+            return;
+         }
          while (running)
          {
-            
-
             WritePrompt();
 
             string? input = Console.ReadLine();
@@ -54,6 +76,9 @@ namespace MCP
             case "exit":
             case "quit":
                running = false;
+            break;
+            case "decrypt":
+               Handle(Command.DEC, args);
             break;
             case "expire":
                Handle(Command.EXP, args);
@@ -113,6 +138,9 @@ namespace MCP
             break;
             case Command.SIGN:
                signer.HandleCommand(commandArgs);      
+            break;
+            case Command.DEC:
+               dec.HandleCommand(commandArgs);
             break;
 			}
 		}
