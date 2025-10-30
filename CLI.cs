@@ -13,8 +13,9 @@ namespace MCP
       private Expire exp = new Expire();
       private Signer signer = new Signer();
       private Decrypt dec = new Decrypt();
+      private McpInstaller installer = new McpInstaller();  
 
-      private Boolean oneWay = false;
+		private Boolean oneWay = false;
       private string[] args;
 
       public CLI(Boolean oneWay, string[] args)
@@ -76,6 +77,9 @@ namespace MCP
             case "exit":
             case "quit":
                running = false;
+            break;
+            case "install":
+               Handle(Command.INS, args);
             break;
             case "decrypt":
                Handle(Command.DEC, args);
@@ -141,6 +145,9 @@ namespace MCP
             break;
             case Command.DEC:
                dec.HandleCommand(commandArgs);
+            break;
+            case Command.INS:
+               installer.HandleCommand(commandArgs);
             break;
 			}
 		}

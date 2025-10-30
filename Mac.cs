@@ -13,6 +13,12 @@ namespace MCP
 		
 		public void HandleCommand(string[] commandArgs)
 		{
+			if(commandArgs.Length == 0) 
+			{	
+				Console.WriteLine("Weitere Parameter notwendig ! (set, read, status, encrypt)");
+				return;	
+			}
+
 			switch(commandArgs[0]) 
 			{
 				case "set":

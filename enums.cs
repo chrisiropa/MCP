@@ -13,6 +13,7 @@ namespace MCP
 		CD = 2,
 		DIR = 3,
 		EXP = 4,
-		DEC = 5
+		DEC = 5,
+		INS = 6
 	}
 }
