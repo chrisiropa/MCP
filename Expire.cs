@@ -8,15 +8,25 @@ using System.Threading.Tasks;
 
 namespace MCP
 {
-	public class Expire : ICommand
+	public class Expire : BaseCommand, ICommand
 	{
 		private string expire = "";
+
+		protected override string Parameters 
+      { 
+         get
+         {
+            return "status, encrypt, expire set dd.MM.yyyy HH:mm:ss --(Uhrzeit optional)";
+         } 
+      }
+
+
 		public void HandleCommand(string[] commandArgs)
 		{
 			string combineParameters = "";
 			if(commandArgs.Length == 0) 
 			{
-				Console.WriteLine("expire set dd.MM.yyyy HH:mm:ss --(Uhrzeit optional)");
+				ShowHelp();
 				return;
 			}
 
@@ -45,6 +55,9 @@ namespace MCP
 					}
 
 					SetExpire(combineParameters);
+				break;
+				default:
+					ShowHelp();
 				break;
 			}
 		}

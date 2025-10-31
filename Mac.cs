@@ -7,15 +7,22 @@ using System.Threading.Tasks;
 
 namespace MCP
 {
-	public class Mac : ICommand
+	public class Mac : BaseCommand, ICommand
 	{
 		private string mac = "";
 		
+		protected override string Parameters 
+      { 
+         get
+         {
+            return "status, encrypt, set, read";
+         } 
+      }
 		public void HandleCommand(string[] commandArgs)
 		{
 			if(commandArgs.Length == 0) 
 			{	
-				Console.WriteLine("Weitere Parameter notwendig ! (set, read, status, encrypt)");
+				ShowHelp();
 				return;	
 			}
 
@@ -32,6 +39,9 @@ namespace MCP
 				break;
 				case "encrypt":
 					Encrypt(commandArgs);
+				break;
+				default:
+					ShowHelp();
 				break;
 			}
 		}
@@ -86,7 +96,7 @@ namespace MCP
 
 			if(mac2Encrypt.Length == 0)
 			{
-				Console.WriteLine("Keine MAC-Adresse zum Encrypten = {0}", mac2Encrypt);
+				Console.WriteLine("Keine MAC-Adresse zum Encrypten. mac read ausführen");
 			}
 			else
 			{

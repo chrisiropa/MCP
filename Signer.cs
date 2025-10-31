@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MCP
 {
-	public class Signer : ICommand
+	public class Signer : BaseCommand, ICommand
 	{	
 		public static class EmbeddedSignature
       {         
@@ -27,8 +27,22 @@ namespace MCP
          fileToSign = "";
 		}
 
+      protected override string Parameters 
+      { 
+         get
+         {
+            return "Zu signierende Datei. Z.B: sign DatenClieNT.exe -- vorher mit cd in das entsprechende Directory gehen.";
+         } 
+      }
+
       public void HandleCommand(string[] commandArgs)
       {
+         if(commandArgs.Length == 0) 
+			{
+				ShowHelp();
+				return;
+			}
+
          this.fileToSign = commandArgs[0];
 
          Start();

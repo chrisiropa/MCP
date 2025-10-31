@@ -6,8 +6,15 @@ using System.Threading.Tasks;
 
 namespace MCP
 {
-	public class Dir : ICommand
+	public class Dir : BaseCommand, ICommand
 	{
+      protected override string Parameters 
+      { 
+         get
+         {
+            return "Keine Parameter !";
+         } 
+      }
       public void HandleCommand(string[] commandArgs)
 		{
          string path = Directory.GetCurrentDirectory();

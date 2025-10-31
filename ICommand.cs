@@ -10,4 +10,14 @@ namespace MCP
 	{
 		void HandleCommand(string[] commandArgs);
 	}
+
+	public abstract class BaseCommand
+	{
+		protected abstract string Parameters { get; }
+
+		public virtual void ShowHelp()
+		{
+			Console.WriteLine("Mögliche Parameter = {0}", Parameters);
+		}
+	}
 }

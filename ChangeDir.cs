@@ -6,74 +6,85 @@ using System.Threading.Tasks;
 
 namespace MCP
 {
-	public class ChangeDir : ICommand
+	public class ChangeDir : BaseCommand, ICommand
 	{
-      private string currentDirectory = Directory.GetCurrentDirectory();
 
-      public string CurrDir
+		private string currentDirectory = Directory.GetCurrentDirectory();
+
+      
+      protected override string Parameters 
+      { 
+         get
+         {
+            return " .., \\";
+         } 
+      }
+
+		public string CurrDir
       {
          get { return currentDirectory; } 
       }
 		public void HandleCommand(string[] commandArgs)
       {
-          if (commandArgs.Length == 0)
-              return;
+         if (commandArgs.Length == 0)
+         {
+            ShowHelp();
+				return;
+         }
+         string targetPath = commandArgs[0].Trim('"'); // ← WICHTIG!
 
-          string targetPath = commandArgs[0].Trim('"'); // ← WICHTIG!
+         // Sonderfall: cd ..
+         if (targetPath == "..")
+         {
+            var parentInfo = Directory.GetParent(currentDirectory);
+            if (parentInfo != null)
+            {
+               string parent = parentInfo.FullName;
+               Directory.SetCurrentDirectory(parent);
+               currentDirectory = parent;
+            }
+            else
+            {
+               Console.WriteLine("Bereits im Stammverzeichnis.");
+            }
+            return;
+         }
 
-          // Sonderfall: cd ..
-          if (targetPath == "..")
-          {
-              var parentInfo = Directory.GetParent(currentDirectory);
-              if (parentInfo != null)
-              {
-                  string parent = parentInfo.FullName;
-                  Directory.SetCurrentDirectory(parent);
-                  currentDirectory = parent;
-              }
-              else
-              {
-                  Console.WriteLine("Bereits im Stammverzeichnis.");
-              }
-              return;
-          }
+         // Sonderfall: cd .
+         if (targetPath == ".")
+            return;
 
-          // Sonderfall: cd .
-          if (targetPath == ".")
-              return;
+         string newPath;
 
-          string newPath;
+         // Prüfen ob absoluter Pfad mit Laufwerksbuchstabe
+         string root = Path.GetPathRoot(targetPath);
+         bool isAbsoluteWithDrive = !string.IsNullOrEmpty(root) && root.Contains(':');
 
-          // Prüfen ob absoluter Pfad mit Laufwerksbuchstabe
-          string root = Path.GetPathRoot(targetPath);
-          bool isAbsoluteWithDrive = !string.IsNullOrEmpty(root) && root.Contains(':');
+         if (isAbsoluteWithDrive)
+         {
+            newPath = targetPath;
+         }
+         else if (Path.IsPathRooted(targetPath))
+         {
+            string drive = Path.GetPathRoot(currentDirectory);
+            newPath = Path.Combine(drive, targetPath.TrimStart(Path.DirectorySeparatorChar));
+         }
+         else
+         {
+            newPath = Path.Combine(currentDirectory, targetPath);
+         }
 
-          if (isAbsoluteWithDrive)
-          {
-              newPath = targetPath;
-          }
-          else if (Path.IsPathRooted(targetPath))
-          {
-              string drive = Path.GetPathRoot(currentDirectory);
-              newPath = Path.Combine(drive, targetPath.TrimStart(Path.DirectorySeparatorChar));
-          }
-          else
-          {
-              newPath = Path.Combine(currentDirectory, targetPath);
-          }
+         newPath = Path.GetFullPath(newPath);
 
-          newPath = Path.GetFullPath(newPath);
-
-          if (Directory.Exists(newPath))
-          {
-              Directory.SetCurrentDirectory(newPath);
-              currentDirectory = newPath;
-          }
-          else
-          {
-              Console.WriteLine($"Das Verzeichnis \"{newPath}\" existiert nicht.");
-          }
+         if (Directory.Exists(newPath))
+         {
+            Directory.SetCurrentDirectory(newPath);
+            currentDirectory = newPath;
+         }
+         else
+         {
+            Console.WriteLine($"Das Verzeichnis \"{newPath}\" existiert nicht.");
+         }
       }
-
 	}
 }
