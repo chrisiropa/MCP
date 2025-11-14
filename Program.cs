@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System;
 
 
 
@@ -26,20 +28,46 @@ namespace MCP
          else
          {
             Console.WriteLine("Master Control Programm gestartet...");
-         }
 
-         
+            SetPath();
+         }
 
          CLI cli = new CLI(oneWay, args);
 
-
          cli.Run();
-
 
          Console.WriteLine("Master Control Programm beendet...");
          Thread.Sleep(1000);
-
       }
 
+      static void SetPath()
+      {
+         string newPath = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\');
+
+         // PATH (Machine) lesen
+         string currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine);
+
+         if (string.IsNullOrWhiteSpace(currentPath))
+         {
+            currentPath = "";
+         }
+
+
+         // PATH in einzelne Einträge splitten
+         var pathEntries = currentPath.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+         // Exakte Prüfung
+         bool alreadyExists = pathEntries.Any(p => string.Equals(p.TrimEnd('\\'), newPath,StringComparison.OrdinalIgnoreCase));
+
+         if (!alreadyExists)
+         {
+            string updatedPath = currentPath + ";" + newPath;
+
+            Environment.SetEnvironmentVariable("PATH",updatedPath,EnvironmentVariableTarget.Machine);
+
+            Console.WriteLine("Erster Start ! Pfad wurde zu PATH hinzugefügt: " + newPath);
+            Console.WriteLine("CMD/Powershell neu starten, damit die Änderungen wirksam werden !");
+         }
+      }
    }
 }
